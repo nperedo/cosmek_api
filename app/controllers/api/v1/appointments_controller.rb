@@ -41,6 +41,20 @@ module Api
         render json: { error: "Invalid time format" }, status: :unprocessable_entity
       end
 
+      def find
+        customer = Customer.find_by(
+          name: params[:name],
+          email: params[:email],
+          phone: params[:phone]
+        )
+        if customer
+          appointments = customer.appointments.includes(:stylist)
+          render json: appointments, status: :ok
+        else
+          render json: [], status: :ok
+        end
+      end
+
       private
 
       def set_appointment
@@ -50,7 +64,7 @@ module Api
       end
 
       def appointment_params
-        params.permit(:appointment, :time, :duration, :customer_id, :stylist_id, :status)
+        params.require(:appointment).permit(:time, :duration, :customer_id, :stylist_id, :status)
       end
     end
   end

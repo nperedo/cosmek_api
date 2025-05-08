@@ -8,27 +8,24 @@ module Api
 
       def show 
         customer = Customer.find(params[:id])
-        render json: customers
+        render json: customer  
       rescue ActiveRecord::RecordNotFound
         render json: { error: "Customer not found" }, status: :not_found
       end  
 
       def create
         customer = Customer.new(customer_params)
-
-        if customer.save!
+        if customer.save
           render json: customer, status: :created
         else 
           render json: { errors: customer.errors.full_messages }, status: :unprocessable_entity
         end 
       end
 
-
-
       private
 
       def customer_params
-        params.permit(:customer, :name, :phone, :email)
+        params.require(:customer).permit(:name, :phone, :email)
       end 
     end
   end
